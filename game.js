@@ -67,6 +67,7 @@ var blockDict={
     70 : ['yellow', false, []],
 }
 var tetrisData = [];
+var stopDown = false;
 
 function makeColums(){
     var fragment = document.createDocumentFragment();
@@ -94,16 +95,38 @@ function drawScreen(){
 }
 
 function makeBlocks(){
+    stopDown = false;
    var block =  blockArr[Math.floor(Math.random()*7)][2];
    console.log(block);
    block.forEach(function(tr,i){
        tr.forEach(function(td, j){
+           //TODO: when making blocks, if full, then game over.
            tetrisData[i][j+3] = td;
        });
    });
    drawScreen();
+} 
+function moveDownBlocks(){
+    for(var i = tetrisData.length-1; i >=0; i--){
+        tetrisData[i].forEach(function(td, j){
+            if(td>0 && td < 10){
+                if(tetrisData[i+1] && !stopDown){
+                    tetrisData[i+1][j] =td;
+                    tetrisData[i][j] = 0;
+                } else{ // when reaching the bottom
+                    stopDown = true;
+                    tetrisData[i][j] = td *10;
+                }
+                
+            }
+        });
+    }
+    if(stopDown){
+        makeBlocks();
+    }
+    console.log(tetrisData);
+    drawScreen();
 }
-
 window.addEventListener('keydown', function(e){
  this.console.log(e);
  switch(e.code){
@@ -134,3 +157,4 @@ window.addEventListener('keyup', function(e){
 
 makeColums();
 makeBlocks();
+setInterval(moveDownBlocks, 100);
