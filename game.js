@@ -238,3 +238,91 @@ function draw(){
         });
     });
 }
+
+function drawNext() { // a function to draw the next block
+    const nextTable = document.getElementById('next-table');
+    nextTable.querySelectorAll('tr').forEach((col, i)=>{
+        Array.from(col.children).forEach((row, j)=>{
+            if(nextBlock.shape[0][i] && nextBlock.shape[0][i][j] >0){
+                nextTable.querySelectorAll('tr')[i].children[j].className = colors[nextBlock.numCode - 1];
+            } else {
+                nextTable.querySelector('tr')[i].children[j].className = 'white';
+            }
+        });
+    });
+}
+
+function generate(){ // create tetris blocks
+if(!currentBlock){
+    currentBlock = blocks[Math.floor(Math.random() * blocks.length)];
+} else {
+    currentBlock = nextBlock;
+}
+currentBlock.currentShapeIndex = 0;
+nextBlock = blocks[Math.floor(Math.random()* blocks.length)]; // make next block in advance
+console.log(currentBlock);
+drawNext();
+currentTopLeft = [-1, 3];
+let isGameOver = false;
+currentBlock.shape[0].slice(1).forEach((col, i)=> { // to judge if the game is over
+    col.forEach((row, j)=>{
+        if(row && tetris[i][j + 3]){
+            isGameOver = true;
+        }
+    });
+})
+currentBlock.shape[0].slice(1).forEach((col, i)=>{ // make block data
+    console.log(currentBlock.shape[0], currentBlock.shape[0].slice(1), col);
+    col.forEach((row, j) => {
+        if(row){
+            tetrisData[i][j + 3] = currentBlock.numCode;
+        }
+    });
+});
+ console.log('generate', JSON.parse(JSON.stringify(currentBlock)));
+ if(isGameOver){
+     clearInterval(int);
+     draw();
+     alert('game over');
+ } else {
+     draw();
+ }
+}
+
+function checkRows(){ // check if the row is full
+    const fullRows = [];
+    tetrisData.forEach((col, i) => {
+        let count = 0;
+        col.forEach((row, j) =>{
+            if(row > 0){
+                count++;
+            }
+        });
+        if(count === 10){
+            fullRows.push(i);
+        }
+    });
+    const fullRowsCount = fullRows.length;
+    tetrisData = tetrisData.filter((row, i) => { !fullRows.includes(i)});
+    for(let i =0; i < fullRowsCount; i++){
+        tetrisData.unshift([0,0,0,0,0,0,0,0,0,0]);
+    }
+    console.log(fullRows, JSON.parse(JSON.stringify(tetrisData)));
+    let score = parseInt(document.getElementById('score').textContent, 10);
+    score += fullRowsCount **2;
+    document.getElementById('score').textContent = String(score);
+ 
+}
+
+function tick(){ // move down one row
+    const nextTopLeft = [currentTopLeft[0]+1, currentTopLeft[1]];
+    const activeBlocks = [];
+    let canGoDown = true;
+    let currentBlockShape = currentBlock.shape[currentBlock.currentShapeIndex];
+    for(let i = currentTopLeft[0]; i < currentTopLeft[0] + currentBlockShape.length; i++){
+        //if there is a block down
+        if(i < 0 || i >= 20) continue;
+    }
+    for ()
+
+}
